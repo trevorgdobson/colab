@@ -1,2 +1,4 @@
 .idea/
+/congress/data/
+*.json
 scratch*.py
