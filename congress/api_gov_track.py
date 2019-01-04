@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import requests
+
+
 # Function for loading vote meta data_legacy_gov_track (name, who won, ID, house, session, etc), from Gov Track API
 # gov track API Documentation here: https://www.govtrack.us/developers/api
 # NOTE: Gov Track is being deprecated after the Summer 2017 recess.
