@@ -9,13 +9,17 @@ client = bigquery.Client(credentials=credentials, project=project_id)
 
 
 # Note - this requires a recent >=0.21 version of pandas, and a parquet library like pyarrow.  Can't get it to work.
-def upload_data_frame_to_gcp(df, dataset_id, table_id, delete_existing=True):
+def upload_data_frame_to_gcp(df, dataset_id, table_id, delete_existing=True, gcp_schema=None):
     dataset_ref = client.dataset(dataset_id)
     table_ref = dataset_ref.table(table_id)
     job_config = bigquery.LoadJobConfig()
     job_config.source_format = bigquery.SourceFormat.CSV
     job_config.skip_leading_rows = 1
-    job_config.autodetect = True
+
+    if gcp_schema is None:
+        job_config.autodetect = True
+    else:
+        job_config.schema = gcp_schema
 
     # Note - this requires a recent >=0.21 version of pandas, and a parquet library like pyarrow.  Can't get it to work.
     # job = client.load_table_from_dataframe(
@@ -27,8 +31,14 @@ def upload_data_frame_to_gcp(df, dataset_id, table_id, delete_existing=True):
     if delete_existing:
         delete_table_from_gcp(dataset_id, table_id)
 
+    if not os.path.exists("data"):
+        print "Directory 'data' not found - creating it."
+        os.mkdir("data")
+
     csv_file_path = 'data/to_gcp_{}_{}.csv'.format(dataset_id, table_id)
     df.to_csv(csv_file_path, sep="|", encoding='utf-8', index=False)
+    job_config.field_delimiter = '|'
+
     with open(csv_file_path, 'rb') as source_file:
         job = client.load_table_from_file(
             source_file,
@@ -36,6 +46,9 @@ def upload_data_frame_to_gcp(df, dataset_id, table_id, delete_existing=True):
             location='US',  # Must match the destination dataset location.
             job_config=job_config)  # API request
     job.result()  # Waits for table load to complete.
+
+    if job.error_result:
+        raise RuntimeError(job.errors)
 
     os.remove(csv_file_path)
 
