@@ -29,15 +29,16 @@ def retrieve_vote_pro_publica(vote):
     url = "https://api.propublica.org/congress/v1/{}/{}/sessions/{}/votes/{}.json".format(
         vote['congress'], vote['chamber'], vote['session'], vote['roll_call'])
     # print url
-    json = requests.get(url, headers=PRO_PUBLICA_API_KEY).json()
+    json_result = requests.get(url, headers=PRO_PUBLICA_API_KEY).json()
     # print json["results"]["votes"]["vote"]["positions"]
-    result = pd.DataFrame(json["results"]["votes"]["vote"]["positions"])
+    result = pd.DataFrame(json_result["results"]["votes"]["vote"]["positions"])
+    result['dw_nominate'] = pd.to_numeric(result['dw_nominate'])  # Need to handle years with dw_nominate="None"
     result['chamber'] = vote["chamber"]
     result['congress'] = vote["congress"]
     result['session'] = vote["session"]
     result['date'] = vote["date"]
     result['time'] = vote["time"]
-    result['roll_call'] = json["results"]["votes"]["vote"]['roll_call']
-    result['question'] = json["results"]["votes"]["vote"]['question']
-    result['description'] = json["results"]["votes"]["vote"]['description']
+    result['roll_call'] = json_result["results"]["votes"]["vote"]['roll_call']
+    result['question'] = json_result["results"]["votes"]["vote"]['question']
+    result['description'] = json_result["results"]["votes"]["vote"]['description']
     return result
