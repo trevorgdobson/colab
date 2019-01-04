@@ -32,7 +32,7 @@ for chamber in chambers:
 
             print "{}: Uploading data to GCP...".format(datetime.now())
             try:
-                upload_data_frame_to_gcp(data, dataset_id, table_id, gcp_schema=get_gcp_vote_schema())
+                upload_data_frame_to_gcp(data, dataset_id, table_id, gcp_schema=get_gcp_vote_schema(chamber))
                 print "{}: Load complete.".format(datetime.now())
             except exceptions.BadRequest as err:
                 print err

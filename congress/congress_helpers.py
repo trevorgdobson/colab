@@ -5,8 +5,10 @@ def congress_id_from_year(year):
     return int((year - 2011) / 2 + 112)
 
 
-def get_gcp_vote_schema():
-    return [
+def get_gcp_vote_schema(chamber):
+    district_column = [bigquery.SchemaField('district', 'INTEGER')] if chamber == "house" else []
+
+    return district_column + [
         bigquery.SchemaField('dw_nominate', 'FLOAT'),
         bigquery.SchemaField('member_id', 'STRING'),
         bigquery.SchemaField('name', 'STRING'),
