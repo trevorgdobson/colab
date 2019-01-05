@@ -2,3 +2,4 @@
 /congress/data/
 /*/*.json
 scratch*.py
+/*.pyc
