@@ -23,8 +23,17 @@ def map_vote_values_to_numeric(vote_data):
 
 def generate_vote_matrix(df, sort_partisan=True):
     df = map_vote_values_to_numeric(df)
-    row_pivots = ([df['dw_nominate']] if sort_partisan else []) + [df['name'], df['member_id'], df['party'], df['state']]
-    column_pivots = [df['congress'], df['session'], df['date'], df['time'], df["roll_call"]]
+
+    if sort_partisan:
+        row_pivots = [df['dw_nominate'], df['name'], df['member_id'], df['party'], df['state']]
+    else:
+        row_pivots = [df['name'], df['member_id'], df['party'], df['state']]
+
+    if 'description' in df:
+        column_pivots = [df['date'], df['roll_call'], df['description']]
+    else:
+        column_pivots = [df['congress'], df['date'], df["roll_call"]]
+
     return pd.crosstab(row_pivots, column_pivots, values=df["vote_position"], aggfunc='sum')
 
 
