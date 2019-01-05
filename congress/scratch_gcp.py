@@ -11,10 +11,12 @@ query = """
     name, member_id, party, state,
     congress, session, date, time, roll_call,
     vote_position, dw_nominate
-  FROM `congress.votes_201*`
+  FROM `congress.votes_senate_all`
   WHERE date > '2016-1-1'
   """
 df = execute_query(query)
+
+print "Loaded", len(df), "rows."
 
 # TODO: Fix the dw_nominate casting issue
 # Can't load DWNominate from votes_* probably due to inconsistent casting upstream across shards (string vs. float)
