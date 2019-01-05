@@ -2,5 +2,5 @@
 /congress/data/
 /*/*.json
 scratch*.py
-/*.pyc
+/*/*.pyc
 /*/.ipynb_checkpoints/
