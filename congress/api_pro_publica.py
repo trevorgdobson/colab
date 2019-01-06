@@ -32,7 +32,12 @@ def retrieve_vote_pro_publica(vote):
     json_result = requests.get(url, headers=PRO_PUBLICA_API_KEY).json()
     # print json["results"]["votes"]["vote"]["positions"]
     result = pd.DataFrame(json_result["results"]["votes"]["vote"]["positions"])
-    result['dw_nominate'] = pd.to_numeric(result['dw_nominate'])  # Need to handle years with dw_nominate="None"
+
+    if 'dw_nominate' in result:
+        result['dw_nominate'] = pd.to_numeric(result['dw_nominate'])  # Need to handle years with dw_nominate="None"
+    else:
+        result['dw_nominate'] = None
+
     result['chamber'] = vote["chamber"]
     result['congress'] = vote["congress"]
     result['session'] = vote["session"]
